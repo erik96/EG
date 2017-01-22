@@ -1,0 +1,137 @@
+#include <iostream>
+#include <graphics.h>
+#include <math.h>
+#define PI 3.1415
+#define NRN 8
+using namespace std;
+void waitForLeftMouseClick();
+typedef struct { int x,y;} NOD;
+NOD v[NRN]={ {250,250}, {350,250}, {300,336}, {250,250} };
+
+void waitForLeftMouseClick(){
+    clearmouseclick(WM_LBUTTONDOWN);
+    const int DELAY = 50; // Milliseconds of delay between checks
+    int x, y;
+    while (!ismouseclick(WM_LBUTTONDOWN))
+        delay(DELAY);
+    getmouseclick(WM_LBUTTONDOWN, x, y);
+}
+
+int main() {
+    int p[14], t1[8], t2[8], t3[8];
+    int R = 100;
+
+
+    for(int i = 0; i < 7; i++) {
+        double a = 2*i*PI/6;
+        p[2*i] = (int)(R * cos(a)) + 250;
+        p[2*i+1] = (int)(R * sin(a)) + 250;
+    }
+
+    int xc=0, yc=0;
+    for(int i = 0; i < 6; i++) {
+        xc += p[2*i];
+        yc += p[2*i+1];
+    }
+    xc /= 6;
+    yc /= 6;
+
+    initwindow(800,600);
+    setcolor(RED);
+    drawpoly(7,p);
+
+    t1[0] = xc; t1[1] = yc; t1[2] = p[0]; t1[3] = p[1]; t1[4] = p[2]; t1[5] = p[3], t1[6] = xc, t1[7] = yc;
+    t2[0] = xc; t2[1] = yc; t2[2] = p[2]; t2[3] = p[3]; t2[4] = p[4]; t2[5] = p[5], t2[6] = xc, t2[7] = yc;
+    t3[0] = xc; t3[1] = yc; t3[2] = p[4]; t3[3] = p[5]; t3[4] = p[6]; t3[5] = p[7], t3[6] = xc, t3[7] = yc;
+
+    setcolor(BLUE);
+    line(t1[0],t1[1],t1[2],t1[3]);
+    line(t1[0],t1[1],t1[4],t1[5]);
+
+    line(t2[0],t2[1],t2[2],t2[3]);
+    line(t2[0],t2[1],t2[4],t2[5]);
+
+    line(t3[0],t3[1],t3[2],t3[3]);
+    line(t3[0],t3[1],t3[4],t3[5]);
+
+    line(xc,yc,p[8],p[9]);
+    line(xc,yc,p[10],p[11]);
+
+    int xc1=0, yc1=0, xc2=0,yc2=0,xc3=0,yc3=0;
+    for(int i = 0; i < 3; i++) {
+        xc1 += t1[2*i];
+        yc1 += t1[2*i+1];
+        xc2 += t2[2*i];
+        yc2 += t2[2*i+1];
+        xc3 += t3[2*i];
+        yc3 += t3[2*i+1];
+    }
+    xc1 /= 3; yc1 /= 3;
+    xc2 /= 3; yc2 /= 3;
+    xc3 /= 3; yc3 /= 3;
+
+    waitForLeftMouseClick();
+    setwritemode(XOR_PUT);
+
+    for(int i = 0; i < 10; i++) {
+        drawpoly(4,t1);
+        drawpoly(4,t2);
+        drawpoly(4,t3);
+        delay(500);
+        drawpoly(4,t1);
+        drawpoly(4,t2);
+        drawpoly(4,t3);
+
+        //triunghiu de jos
+        for(int j = 0; j < 4; j++) {
+            t2[2*j+1] += 5;
+        }
+        yc2 += 10;
+        t2[1] += 5;
+        t2[7] += 5;
+        t2[2] -= 3;
+        t2[4] += 3;
+
+        //triungiu din dreapta
+        t1[0] += 10; t1[6] += 10;
+        t1[1] += 5;  t1[7] += 5;
+        xc1 += 10;   yc1 += 5;
+
+        t1[2] += 3; t1[3] += 5;
+        t1[4] += 6; t1[5] -= 1;
+
+        //triungiu din stanga
+        t3[0] -= 10; t3[6] -= 10;
+        t3[1] += 5;  t3[7] += 5;
+        xc3 -=10;    yc3 += 5;
+
+        t3[2] -= 6; t3[3] -= 1;
+        t3[4] -= 3; t3[5] += 5;
+
+        double alfa = PI/14;
+        double cosa = cos(alfa), sina = sin(alfa);
+        for(int i=0;i<4;i++){
+            double xi = t1[2*i];
+            double yi = t1[2*i+1];
+
+            t1[2*i]   = xc1 + (xi-xc1) * cosa - (yi-yc1)*sina;
+            t1[2*i+1] = yc1 + (xi-xc1) * sina + (yi-yc1)*cosa;
+
+            double xi2 = t2[2*i];
+            double yi2 = t2[2*i+1];
+
+            t2[2*i]   = xc2 + (xi2-xc2) * cosa - (yi2-yc2)*sina;
+            t2[2*i+1] = yc2 + (xi2-xc2) * sina + (yi2-yc2)*cosa;
+
+            double xi3 = t3[2*i];
+            double yi3 = t3[2*i+1];
+
+            t3[2*i]   = xc3 + (xi3-xc3) * cosa - (yi3-yc3)*sina;
+            t3[2*i+1] = yc3 + (xi3-xc3) * sina + (yi3-yc3)*cosa;
+        }
+
+
+    }
+    while(!kbhit());
+    return 0;
+}

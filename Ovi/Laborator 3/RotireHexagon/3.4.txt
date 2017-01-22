@@ -1,0 +1,112 @@
+#include <iostream>
+#include <graphics.h>
+#include <math.h>
+#define PI 3.1415
+
+using namespace std;
+
+int main()
+{
+    initwindow(800,600);
+
+    int p[14], p2[14], p3[14], R = 50;
+    for(int i=0; i<7; i++) {
+        double a = 2*i*PI/6;
+        p[2*i] = (int)(R*cos(a)) + 150;
+        p[2*i+1] = (int)(R*sin(a)) + 150;
+    }
+    drawpoly(7,p);
+
+    double alfa = PI/1.5;
+    double cosa = cos(alfa), sina = sin(alfa);
+    for(int i=0;i<7;i++){
+        double xi = p[2*i], yi = p[2*i+1];
+        p2[2*i]   = p[2] + (xi-p[2]) * cosa - (yi-p[3])*sina;
+        p2[2*i+1] = p[3] + (xi-p[2]) * sina + (yi-p[3])*cosa;
+    }
+
+    drawpoly(7,p2);
+
+    for(int i=0;i<7;i++){
+        double xi = p2[2*i], yi = p2[2*i+1];
+        p3[2*i]   = p[2] + (xi-p[2]) * cosa - (yi-p[3])*sina;
+        p3[2*i+1] = p[3] + (xi-p[2]) * sina + (yi-p[3])*cosa;
+    }
+
+    drawpoly(7,p3);
+    float k = 1.5;
+    for(int i=0; i<7; i++) {
+        p[2*i] += 50; p[2*i+1] += 50;
+        p2[2*i] += 50; p2[2*i+1] += 50;
+        p3[2*i] += 50; p3[2*i+1] += 50;
+
+         p[2*i] =  p[2*i] * k;  p[2*i+1] =  p[2*i+1] * k;
+        p2[2*i] = p2[2*i] * k; p2[2*i+1] = p2[2*i+1] * k;
+        p3[2*i] = p3[2*i] * k; p3[2*i+1] = p3[2*i+1] * k;
+    }
+    setcolor(RED);
+    //drawpoly(7,p);drawpoly(7,p2);drawpoly(7,p3);
+
+
+    double alfaa = PI/4;
+    double cosaa = cos(alfaa), sinaa = sin(alfaa);
+    for(int i=0;i<7;i++){
+        double xi = p[2*i], yi = p[2*i+1];
+        p[2*i]   = p[2] + (xi-p[2]) * cosaa - (yi-p[3])*sinaa;
+        p[2*i+1] = p[3] + (xi-p[2]) * sinaa + (yi-p[3])*cosaa;
+    }
+    for(int i=0;i<7;i++){
+        double xi = p2[2*i], yi = p2[2*i+1];
+        p2[2*i]   = p[2] + (xi-p[2]) * cosaa - (yi-p[3])*sinaa;
+        p2[2*i+1] = p[3] + (xi-p[2]) * sinaa + (yi-p[3])*cosaa;
+    }
+
+    for(int i=0;i<7;i++){
+        double xi = p3[2*i], yi = p3[2*i+1];
+        p3[2*i]   = p[2] + (xi-p[2]) * cosaa - (yi-p[3])*sinaa;
+        p3[2*i+1] = p[3] + (xi-p[2]) * sinaa + (yi-p[3])*cosaa;
+    }
+
+    setcolor(BLUE);
+    drawpoly(7,p);drawpoly(7,p2);drawpoly(7,p3);
+
+    k = 0.3;
+    for(int i=0; i<7; i++) {
+        p[2*i] += 800; p[2*i+1] += 50;
+        p2[2*i] += 800; p2[2*i+1] += 50;
+        p3[2*i] += 800; p3[2*i+1] += 50;
+
+         p[2*i] =  p[2*i] * k;  p[2*i+1] =  p[2*i+1] * k;
+        p2[2*i] = p2[2*i] * k; p2[2*i+1] = p2[2*i+1] * k;
+        p3[2*i] = p3[2*i] * k; p3[2*i+1] = p3[2*i+1] * k;
+    }
+    setcolor(RED);
+    //drawpoly(7,p);drawpoly(7,p2);drawpoly(7,p3);
+
+
+    double alfaaa = PI/4;
+    double cosaaa = cos(alfaa), sinaaa = sin(alfaa);
+    for(int i=0;i<7;i++){
+        double xi = p[2*i], yi = p[2*i+1];
+        p[2*i]   = p[2] + (xi-p[2]) * cosaaa - (yi-p[3])*sinaaa;
+        p[2*i+1] = p[3] + (xi-p[2]) * sinaaa + (yi-p[3])*cosaaa;
+    }
+    for(int i=0;i<7;i++){
+        double xi = p2[2*i], yi = p2[2*i+1];
+        p2[2*i]   = p[2] + (xi-p[2]) * cosaaa - (yi-p[3])*sinaaa;
+        p2[2*i+1] = p[3] + (xi-p[2]) * sinaaa + (yi-p[3])*cosaaa;
+    }
+
+    for(int i=0;i<7;i++){
+        double xi = p3[2*i], yi = p3[2*i+1];
+        p3[2*i]   = p[2] + (xi-p[2]) * cosaaa - (yi-p[3])*sinaaa;
+        p3[2*i+1] = p[3] + (xi-p[2]) * sinaaa + (yi-p[3])*cosaaa;
+    }
+
+    setcolor(YELLOW);
+    drawpoly(7,p);drawpoly(7,p2);drawpoly(7,p3);
+
+
+    while(!kbhit());
+    return 0;
+}

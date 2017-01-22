@@ -1,0 +1,57 @@
+///Fiecare patrat se modifica in functie de cel dinaintea lui
+#include <iostream>
+#include<graphics.h>
+#include<cmath>
+#define PI 3.14159265
+using namespace std;
+
+int main()
+{
+
+    int points[]={100,100,100,200,200,200,200,100,100,100};
+    initwindow(800,800);
+    setcolor(GREEN);
+    drawpoly(5,points);
+    ///trasnaltie
+    int dx,dy;
+    dx=10;
+    dy=50;
+
+    for(int i=0;i<9;i++){
+        points[2*i]=points[2*i]+dx;
+        points[2*i+1]=points[2*i+1]+dy;
+    }
+    setcolor(RED);
+    drawpoly(5,points);
+
+
+
+    ///scalare
+    int a=2;
+    for(int i=0;i<9;i++){
+        points[2*i]=points[2*i]*a;
+        points[2*i+1]=points[2*i+1]*a;
+    }
+    setcolor(BLUE);
+    drawpoly(5,points);
+
+
+    ///rotatie
+    int xc=(points[6]+points[0])/2,yc=(points[3]+points[1])/2;///centru patratului
+    cout<<xc<<endl<<yc;
+    circle(xc, yc,4);
+    float afla=PI/4;
+    float cosa=cos(afla),sina=sin(afla);
+    for(int i=0;i<9;i++){
+		float xi = points[2*i];
+		float yi = points[2*i+1];
+
+		points[2*i]   = xc + (xi-xc) * cosa - (yi-yc)*sina;
+		points[2*i+1] = yc + (xi-xc) * sina + (yi-yc)*cosa;
+	}
+    setcolor(YELLOW);
+	drawpoly(5,points);
+
+    while(!kbhit());
+    return 0;
+}

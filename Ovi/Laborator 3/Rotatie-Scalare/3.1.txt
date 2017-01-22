@@ -1,0 +1,60 @@
+//Rotatie + translatie
+#include <iostream>
+#include <graphics.h>
+#include <math.h>
+#define PI 3.1415
+
+using namespace std;
+
+int main()
+{
+    int p[] = {100, 100, 200, 100, 200, 200, 100, 200, 100, 100};
+    initwindow(800,600);
+
+    drawpoly(5,p);
+    for(int i=0; i<5; i++) {
+        p[2*i] *= 1.5;
+        p[2*i+1] *= 1.5;
+    }
+    setcolor(RED);
+    drawpoly(5,p);
+    int xc=0, yc=0;
+    for(int i=0; i<4; i++) {
+        xc+=p[2*i];
+        yc+=p[2*i+1];
+    }
+    xc/=4;yc/=4;
+
+    double alfa=PI/4;
+    double cosa=cos(alfa), sina=sin(alfa);
+    for(int i=0; i<5; i++) {
+        double xi=p[2*i], yi=p[2*i+1];
+        p[2*i]   = xc + (xi-xc) * cosa - (yi-yc) * sina;
+        p[2*i+1] = yc + (xi-xc) * sina + (yi-yc) * cosa;
+    }
+    drawpoly(5,p);
+
+    int p2[] = {100, 100, 200, 100, 200, 200, 100, 200, 100, 100};
+    int xc2=0, yc2=0;
+    for(int i=0; i<4; i++) {
+        xc2+=p2[2*i];
+        yc2+=p2[2*i+1];
+    }
+    xc2/=4;yc2/=4;
+
+    for(int i=0; i<5; i++) {
+        double xi=p2[2*i], yi=p2[2*i+1];
+        p2[2*i]   = xc2 + (xi-xc2) * cosa - (yi-yc2) * sina;
+        p2[2*i+1] = yc2 + (xi-xc2) * sina + (yi-yc2) * cosa;
+    }
+    setcolor(BLUE);
+    drawpoly(5,p2);
+    for(int i=0; i<5; i++) {
+        p2[2*i] *= 2;
+        p2[2*i+1] *= 2;
+    }
+    drawpoly(5,p2);
+
+    while(!kbhit());
+    return 0;
+}

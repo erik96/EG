@@ -1,0 +1,85 @@
+/*
+	afisare.cpp (Reprezentare3D)
+*/
+#include <graphics.h>
+#include <stdio.h>
+#include <math.h>
+
+struct POINT2D { int x, y; };
+struct POINT3D { double x, y, z; };
+
+extern struct POINT2D* pCorpProiectat;
+
+typedef struct EDGE {int a,b; struct EDGE* next;} EDGE;
+
+extern EDGE* lista;			// lista muchiilor
+
+// traseaza muchiile
+void DesenCorp3D(){
+	EDGE* muchie = lista;
+    while(muchie){
+		int nod_i = muchie->a;
+		int nod_j = muchie->b;
+		line(   pCorpProiectat[nod_i].x, pCorpProiectat[nod_i].y,
+     			pCorpProiectat[nod_j].x, pCorpProiectat[nod_j].y);
+		muchie = muchie->next;
+     }
+}
+
+
+////////////////////////////////////////////// prisma petagonala
+void genereaza(){
+	printf("\ngenereaza date poliedru");
+
+	struct POINT3D cub[60];
+
+	double a=2*3.14/4,sina,cosa;
+	// recalculeaza coordonatele noii figuri cub[]
+	// prin rotirea in spatiu a
+	for(int i = 0,j = 0; j < 300; i+=4, j+=20) {
+        cub[i].x = 0; cub[i].y = j; cub[i].z = 10;
+	}
+
+	for(int i=0;i<4;i++){
+  		cub[i].y = 0;
+
+		sina = sin(i*a);
+  		cosa = cos(i*a);
+  		cub[i].x = (int)(cub[0].x * cosa - cub[0].z * sina);
+  		cub[i].z = (int)(cub[0].x * sina + cub[0].z * cosa);
+
+  		for(int j = 4, a = 20; j < 60; j+=8, a+=40) {
+            cub[i+j].x = cub[i].x *2;
+            cub[i+j].y = a;
+            cub[i+j].z = cub[i].z *2;
+  		}
+
+  		for(int j = 8, a = 40; j < 60; j+=8, a+=40) {
+            cub[i+j].x = cub[i].x;
+            cub[i+j].y = a;
+            cub[i+j].z = cub[i].z;
+  		}
+	}
+
+	FILE* fp = fopen("corp3d.txt","w");
+	// vertices (noduri, varfuri, vertex-uri)
+	fprintf(fp,"60");
+	for(int i=0;i<60;i++){
+		fprintf(fp, "\n%5.2lf %5.2lf %5.2lf",cub[i].x,cub[i].y,cub[i].z);
+	}
+
+	// edges (muchii)
+	for(int i=0;i<4;i++){
+        for(int j = 0, k = 4; j < 60; j+=4, k+=4) {
+            fprintf(fp, "\n%2d %2d",i+j, (i<3) ? i+j+1 :j);
+        }
+        for(int j = 0, k = 4; k < 60; j+=4, k+=4){
+            fprintf(fp, "\n%2d %2d", i+j,i+k);
+        }
+	}
+	fclose(fp);
+}
+
+
+
+

@@ -1,0 +1,70 @@
+#include <iostream>
+#include <graphics.h>
+#include <math.h>
+#define PI 3.1415
+
+using namespace std;
+
+int main()
+{
+    initwindow(800,600);
+    setcolor(BLUE);
+
+
+
+    setwritemode(XOR_PUT);
+
+
+    int lc[128], ls[2];
+    circle(400,400,5);
+    circle(400,400,125);
+    int j=0;
+    setwritemode(XOR_PUT);
+
+    for(double u=0; u<2*PI; u+=0.1, j++) {
+            //putpixel(400+100*cos(u),400-100*sin(u),5);
+            lc[2*j] = 400+100*cos(u);
+            lc[2*j+1] = 400-100*sin(u);
+    }
+    int a=400, b=150;
+    int c=400, d=50;
+    while(!kbhit()) {
+        int k = 16, l = 48;
+        j = 0;
+        for(int i=0; i<63; i++) {
+            if(j <= 16) {
+                line(a, b, lc[2*i], lc[2*i+1]);
+                line(a, b, c, d);
+                delay(30);
+                line(a, b, lc[2*i], lc[2*i+1]);
+                line(a, b, c, d);
+                d-=2;
+                b-=2;
+                j++;
+            } else if(k <= 48){
+                line(a, b, lc[2*i], lc[2*i+1]);
+                line(a, b, c, d);
+                delay(30);
+                line(a, b, lc[2*i], lc[2*i+1]);
+                line(a, b, c, d);
+                d+=2;
+                b+=2;
+                k++;
+            } else if(l < 63){
+                line(a, b, lc[2*i], lc[2*i+1]);
+                line(a, b, c, d);
+                delay(30);
+                line(a, b, lc[2*i], lc[2*i+1]);
+                line(a, b, c, d);
+                d-=2;
+                b-=2;
+                l++;
+            }
+        }
+    }
+
+
+
+    while(!kbhit());
+    return 0;
+}

@@ -1,0 +1,48 @@
+#include <iostream>
+#include <graphics.h>
+#include <math.h>
+#define PI 3.1415
+
+using namespace std;
+
+int main()
+{
+    initwindow(800,600);
+    setcolor(BLUE);
+    line(300,100,350,100);
+    for(int xo=325, yo=100; yo<400; yo+=10) {
+        putpixel(xo,yo,5);
+    }
+    int l[4] = {325, 100, 325, 280};
+    setcolor(RED);
+    //drawpoly(2, l);
+
+
+    delay(500);
+    setwritemode(XOR_PUT);
+    //drawpoly(2, l);
+
+    int linie[64];
+    int i = 0;
+        for(double u=(5*PI)/4;u<(7*PI)/4, i<32 ;u+=0.05, i++) {
+            putpixel(325+200*cos(u),100-200*sin(u),5);
+        linie[2*i] = 325+200*cos(u);
+        linie[2*i+1] = 100-200*sin(u);
+    }
+
+    while(!kbhit()) {
+        for(i=0; i<32; i++) {
+            line(l[0], l[1], linie[2*i], linie[2*i+1]);
+            delay(30);
+            line(l[0], l[1], linie[2*i], linie[2*i+1]);
+        }
+        for(i=31; i>=0; i--) {
+            line(l[0], l[1], linie[2*i], linie[2*i+1]);
+            delay(30);
+            line(l[0], l[1], linie[2*i], linie[2*i+1]);
+        }
+
+    }
+    while(!kbhit());
+    return 0;
+}

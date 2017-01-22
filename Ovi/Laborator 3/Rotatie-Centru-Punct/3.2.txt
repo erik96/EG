@@ -1,0 +1,61 @@
+#include <iostream>
+#include <graphics.h>
+#include <math.h>
+#define PI 3.1415
+using namespace std;
+
+int main() {
+    initwindow(800, 600);
+
+    int points[12] = {0};
+    int pointss[12] = {0};
+    int pointsss[12] = {0};
+    int R = 100; //raza pentagon
+
+    //calculez cooronate pentagon
+    for(int i = 0 ; i < 6; i++) {
+        double a = i * 2 * 3.14 / 5;
+        points[2*i] = (int)(R * cos(a)) + 200;//pozitie x
+        points[2*i+1] = (int)(R * sin(a)) + 200;//pozitie y
+    }
+
+    drawpoly(6,points); //desenez pentagon
+
+    //calculez coordonate centru
+    double xc = 0, yc = 0;
+    for(int i = 0; i < 5; i++) {
+        xc += points[2*i];
+        yc += points[2*i+1];
+    }
+    xc /= 5; //x centru
+    yc /= 5; //y centru
+
+    circle(xc,yc,5); //desenez centru
+
+    double alfa = PI/4; //unghiul de rotatie
+	double cosa = cos(alfa), sina = sin(alfa);
+	for(int i = 0; i < 6 ; i++){
+		double xi = points[2*i]; //initializez xi cu x din primul tablou
+		double yi = points[2*i+1];  //initializez yi cu y din primul tablou
+        //calculez coordonatele poligonului rotit fata de centru cu PI/4 grade
+		pointss[2*i]   = xc + (xi-xc) * cosa - (yi-yc)*sina;
+		pointss[2*i+1] = yc + (xi-xc) * sina + (yi-yc)*cosa;
+	}
+
+	setcolor(GREEN); //setez culoare GREEN
+	drawpoly(6,pointss); //desenez pentagon rotit
+
+	for(int i = 0; i < 6; i++) {
+        double xi = points[2*i];
+        double yi = points[2*i+1];
+        //calculez coordonatele poligonului rotit fata de punctul (4,5)
+        pointsss[2*i]  = points[4] + (xi-points[4]) * cosa - (yi-points[5])*sina;
+		pointsss[2*i+1] = points[5] + (xi-points[4]) * sina + (yi-points[5])*cosa;
+	}
+
+	setcolor(BLUE);//setez culoare BLUE
+	drawpoly(6,pointsss);//desenare poligon rotit fata de un punct
+
+    while(!kbhit());//asteapta pana apasa o tasta
+    return 0;
+}

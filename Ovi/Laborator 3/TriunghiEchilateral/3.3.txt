@@ -1,0 +1,90 @@
+#include <iostream>
+#include <graphics.h>
+#include <math.h>
+#define PI 3.1415
+using namespace std;
+
+int main(){
+
+    initwindow(800,600);
+    int points[8] = {0};
+    int pointss[8] = {0};
+    int R = 100; //raza triunghi
+
+    //calculez cooronate triunghi
+    for(int i = 0 ; i < 4; i++) {
+        double a = i * 2 * 3.14 / 3;
+        points[2*i] = (int)(R * cos(a)) + 200;//pozitie x
+        points[2*i+1] = (int)(R * sin(a)) + 200;//pozitie y
+    }
+    setcolor(BLUE);
+    drawpoly(4,points);//desenez figura initiala
+
+    //calculez coordonate centru
+    double xc = 0, yc = 0;
+    for(int i = 0; i < 3; i++) {
+        xc += points[2*i];
+        yc += points[2*i+1];
+    }
+    xc /= 3; //x centru
+    yc /= 3; //y centru
+
+    //desenez noua figura
+    setcolor(RED);
+    line(points[0], points[1], points[2], points[3]);
+    line(points[2], points[3], points[4], points[5]);
+    line(points[4], points[5], xc, yc);
+    line(xc, yc, points[0], points[1]);
+
+    //deplasare figur in centrul ecranului
+    /*
+    for(int i = 0; i < 3; i++) {
+        points[2*i] += 200;
+        points[2*i+1] += 100;
+    }
+    */
+
+    //scalare figura cu 30%
+    for(int i = 0; i < 3; i++) {
+        pointss[2*i] = points[2*i] * 0.3;
+        pointss[2*i+1] = points[2*i+1] * 0.3;
+    }
+
+    //calculez centrul noii figuri
+    int xcc = 0, ycc = 0;
+    for(int i = 0; i < 3; i++) {
+        xcc += pointss[2*i];
+        ycc += pointss[2*i+1];
+    }
+    xcc /= 3; //x centru figura noua
+    ycc /= 3; //y centru figura noua
+
+    //rotatie figura cu PI/2 grade
+    double alfa = PI/2; //unghiul de rotatie
+	double cosa = cos(alfa), sina = sin(alfa);
+	for(int i = 0; i < 3 ; i++){
+		double xi = pointss[2*i]; //initializez xi cu x din primul tablou
+		double yi = pointss[2*i+1];  //initializez yi cu y din primul tablou
+        //calculez coordonatele poligonului rotit fata de centru cu PI/4 grade
+		pointss[2*i]   = xcc + (xi-xcc) * cosa - (yi-ycc)*sina;
+		pointss[2*i+1] = ycc + (xi-xcc) * sina + (yi-ycc)*cosa;
+	}
+
+	//deplasare in centrul ecranului
+    for(int i = 0; i < 3; i++) {
+        pointss[2*i] += 341;
+        pointss[2*i+1] += 241;
+    }
+    xcc += 341;
+    ycc += 241;
+
+    //desenez noua figura
+    setcolor(RED + BLUE);
+    line(pointss[0], pointss[1], pointss[2], pointss[3]);
+    line(pointss[2], pointss[3], pointss[4], pointss[5]);
+    line(pointss[4], pointss[5], xcc, ycc);
+    line(xcc, ycc, pointss[0], pointss[1]);
+
+    while(!kbhit());//asteapta apasarea unei taste
+    return 0;
+}

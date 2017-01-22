@@ -1,0 +1,216 @@
+#include <iostream>
+#include <graphics.h>
+#include <math.h>
+#define DIM_STIVA 100
+#define Error -1
+int Xmax=64, Ymax=64;
+
+void waitForLeftMouseClick();
+void DDALine(int x1,int y1,int x2,int y2);
+void patr(int x,int y);
+int CuloarePixel(int i,int j);
+int colorr(int culoare_umplere,int culoare_contur, int xinit,int yinit);
+
+int x,y;            // coordonate mouse
+int latp=10;        // marimea patratului
+
+int X,Y;            // coordonate patrat
+int Xa,Ya;
+         //   anterior
+
+int main(){
+    initwindow(800,800);
+
+    setcolor(GREEN);
+    for(int i=0;i<=64;i++)
+        line(50,50+i*latp,690,50+i*latp);
+    for(int j=0;j<=64;j++)
+        line(50+j*latp,50,50+j*latp,690);
+
+
+    DDALine(10,20,20,10);
+    DDALine(20,10,40,20);
+    DDALine(40,20,63,6);
+    DDALine(63,6,40,45);
+    DDALine(40,45,23,30);
+    DDALine(23,30,20,50);
+    DDALine(20,50,10,20);
+
+    do{
+        waitForLeftMouseClick();
+    // x,y contin coord unui punct din fereastra
+        if(x<50 || x>690 || y<50 || y>690) break;
+
+    // determin coord patratului
+        X = (x-50)/latp;
+        Y = (y-50)/latp;
+
+        colorr(YELLOW,YELLOW,X,Y);
+
+    }while(1);
+
+    return 0;
+}
+
+void DDALine(int x1,int y1,int x2,int y2){
+
+	float dX,dY,iSteps;
+	float xInc,yInc,iCount,x,y;
+
+	dX = x1 - x2;
+	dY = y1 - y2;
+
+	if (fabs(dX) > fabs(dY))
+		 iSteps = fabs(dX);
+	else
+		 iSteps = fabs(dY);
+
+	xInc = dX/iSteps;
+	yInc = dY/iSteps;
+
+	x = x1;
+	y = y1;
+
+	for (iCount=1; iCount<=iSteps; iCount++)
+	{
+		patr((int)x,(int)y);
+		x -= xInc;
+		y -= yInc;
+	}
+	return;
+}
+
+void patr(int i,int j){
+// determin pozitia in grila
+    int xp,yp;
+    xp = 50 + i*latp;
+    yp = 50 + j*latp;
+
+// determin culoarea celulei
+    if(getpixel(xp+1,yp+1)==BLACK)
+        setcolor(YELLOW);
+    else
+        setcolor(BLACK);
+
+    for(int k=1;k<latp;k++)
+        line(xp+k,yp+1,xp+k,yp+latp);
+}
+int CuloarePixel(int i,int j){
+// determin pozitia in grila
+    int xp,yp;
+    xp = 50 + i*latp;
+    yp = 50 + j*latp;
+
+// verific limitele suprafetei de desenare
+    if( i>=Xmax || j>=Ymax || i<0 || j<0) return YELLOW;
+
+// determin culoarea celulei
+    return getpixel(xp+1,yp+1);
+}
+
+int colorr(int culoare_umplere,int culoare_contur, int xinit,int yinit)
+{
+    int stiva[DIM_STIVA];
+    int vf_stiva=1;
+    int xi,yi,x,xmax,xmin,in_int,culoare;
+
+
+    stiva[0]=xinit;		// push(xinit)
+    stiva[1]=yinit;		// push(yinit)
+
+    while(vf_stiva>0) 	// !StivaGoala()
+    {
+        // extragere punct de start din stiva
+        yi=stiva[vf_stiva--];	// pop(&yi);
+        xi=stiva[vf_stiva--];	// pop(&xi);
+
+        // colorare linie curenta
+        patr(xi,yi);
+
+        for(x=xi+1; CuloarePixel(x,yi) != culoare_contur; x++)
+            patr(x,yi);
+        xmax=x;  // limita dreapta
+
+        for(x=xi-1; CuloarePixel(x,yi) != culoare_contur; x--)
+            patr(x,yi);
+        xmin=x;  // limita stanga
+
+        // in linia de sus cauta cate un pixel necolorat in fata unuia colorat
+        for(x=xmin+1,in_int=0; x<xmax; x++)
+        {
+            culoare = CuloarePixel(x,yi-1);
+            if(culoare != culoare_contur && culoare!=culoare_umplere)
+            {
+                if(!in_int) in_int=1;  // indicator punct interior
+            }
+
+            else
+
+                if(in_int)
+                {
+                    if(vf_stiva == DIM_STIVA-2) return Error;
+                    if(x>0 && yi>0)
+                    {
+                        stiva[++vf_stiva]=x-1;	  // salveaza punctul precedent
+                        stiva[++vf_stiva]=yi-1;
+                    }
+                    in_int=0;                // indicator punct interior
+                }
+        }
+
+        // daca a ramas un punct interior nesalvat
+        if(in_int)
+        {
+            if(vf_stiva == DIM_STIVA-2) return Error;
+            if(x>0 && y>0)
+            {
+                stiva[++vf_stiva]=x-1;
+                stiva[++vf_stiva]=yi-1;
+            }
+        }
+
+        // in linia de jos cauta cate un pixel necolorat
+        for(x=xmin+1, in_int=0; x<xmax; x++)
+        {
+            culoare =  CuloarePixel(x,yi+1);
+            if(culoare != culoare_contur && culoare!=culoare_umplere)
+            {
+                if(!in_int) in_int=1;
+            }
+            else if(in_int)
+            {
+                if(vf_stiva==DIM_STIVA-2) return Error;
+                if(x>0 && yi<Ymax)
+                {
+                    stiva[++vf_stiva]=x-1;
+                    stiva[++vf_stiva]=yi+1;
+                }
+                in_int=0;
+            }
+        }
+
+        // daca a ramas un punct interior nesalvat
+        if(in_int)
+        {
+            if(vf_stiva == DIM_STIVA-2) return Error;
+            if(x>0 && yi<Ymax)
+            {
+                stiva[++vf_stiva]=x-1;
+                stiva[++vf_stiva]=yi+1;
+            }
+        }
+    }
+    return 0;
+}
+
+
+void waitForLeftMouseClick(){
+    clearmouseclick(WM_LBUTTONDOWN);
+    const int DELAY = 50; // Milliseconds of delay between checks
+//    int x, y;
+    while (!ismouseclick(WM_LBUTTONDOWN))
+        delay(DELAY);
+    getmouseclick(WM_LBUTTONDOWN, x, y);
+}
+
+

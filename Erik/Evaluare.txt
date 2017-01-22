@@ -1,0 +1,23 @@
+Erik Birgiser II CAL
+
+Elemente de grafica
+
+1. Primitive grafice		0.8
+2. Transformari grafice 2D	0.8
+3. Trasarea graficelor		0.8
+4. Animatie 2D			0.5
+5. Decupare 2D			0.5
+6. Curbe de forma libera	0.8
+7. Reprezentari 3D		0.3
+
+
+Structuri de date
+
+1. Introducere		1
+2. LSI			1
+3. LD			1
+4. LC			0.8
+5. Stive si cozi	1
+6. Tabele de dispersie	0.9
+7. Arbori binari	1
+8. Arbori optimali	0.5

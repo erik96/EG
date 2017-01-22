@@ -1,0 +1,65 @@
+#include <iostream>
+#include <graphics.h>
+#include <math.h>
+#define PI 3.1415
+
+using namespace std;
+
+int main()
+{
+    int sec[4] = {300,300,300,100};
+    int min[4] = {300,300,300,150};
+    int ora[4] = {301,300,301,200};
+
+    initwindow(800,600);
+    circle(300,300,5);
+    circle(300,300,210);
+    line(300,100,300,120);
+    line(300,500,300,480);
+    line(500,300,480,300);
+    line(100,300,120,300);
+
+    setcolor(RED);
+    setwritemode(XOR_PUT);
+    drawpoly(2,ora);
+
+    while(1) {
+        for(int j = 0; j < 60; j++) {
+                drawpoly(2,min);
+            for(int i = 0; i < 60; i++) {
+                drawpoly(2,sec);
+                delay(500);
+                drawpoly(2,sec);
+                double alfa = PI/30;
+                double cosa = cos(alfa), sina = sin(alfa);
+                for(int i=0;i<4;i++){
+                    double xi = sec[2*i];
+                    double yi = sec[2*i+1];
+                    sec[2*i]   = sec[0] + (xi-sec[0]) * cosa - (yi-sec[1])*sina;
+                    sec[2*i+1] = sec[1] + (xi-sec[0]) * sina + (yi-sec[1])*cosa;
+                }
+            }
+            drawpoly(2,min);
+            double alfa = PI/30;
+            double cosa = cos(alfa), sina = sin(alfa);
+            for(int i=0;i<4;i++){
+                double xi = min[2*i];
+                double yi = min[2*i+1];
+                min[2*i]   = sec[0] + (xi-sec[0]) * cosa - (yi-sec[1])*sina;
+                min[2*i+1] = sec[1] + (xi-sec[0]) * sina + (yi-sec[1])*cosa;
+            }
+        }
+        drawpoly(2,ora);
+        double alfa = PI/30;
+        double cosa = cos(alfa), sina = sin(alfa);
+        for(int i=0;i<4;i++){
+            double xi = ora[2*i];
+            double yi = ora[2*i+1];
+            ora[2*i]   = sec[0] + (xi-sec[0]) * cosa - (yi-sec[1])*sina;
+            ora[2*i+1] = sec[1] + (xi-sec[0]) * sina + (yi-sec[1])*cosa;
+            }
+        drawpoly(2,ora);
+    }
+    while(!kbhit());
+    return 0;
+}

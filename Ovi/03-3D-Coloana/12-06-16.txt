@@ -1,0 +1,174 @@
+/*
+	afisare.cpp (Reprezentare3D)
+*/
+#include <graphics.h>
+#include <stdio.h>
+#include <math.h>
+
+struct POINT2D { int x, y; };
+struct POINT3D { double x, y, z; };
+
+extern struct POINT2D* pCorpProiectat;
+
+typedef struct EDGE {int a,b; struct EDGE* next;} EDGE;
+
+extern EDGE* lista;			// lista muchiilor
+
+// traseaza muchiile
+void DesenCorp3D(){
+	EDGE* muchie = lista;
+    while(muchie){
+		int nod_i = muchie->a;
+		int nod_j = muchie->b;
+		line(   pCorpProiectat[nod_i].x, pCorpProiectat[nod_i].y,
+     			pCorpProiectat[nod_j].x, pCorpProiectat[nod_j].y);
+		muchie = muchie->next;
+     }
+}
+
+
+////////////////////////////////////////////// prisma petagonala
+void genereaza(){
+	printf("\ngenereaza date poliedru");
+
+	struct POINT3D cub[60];
+
+	double a=2*3.14/4,sina,cosa;
+	// recalculeaza coordonatele noii figuri cub[]
+	// prin rotirea in spatiu a
+	cub[0].x  = 0; cub[0].y  =   0;  cub[0].z  = 10;
+	cub[4].x  = 0; cub[4].y  =  20;  cub[4].z  = 10;
+	cub[8].x  = 0; cub[8].y  =  40;  cub[8].z  = 10;
+	cub[12].x = 0; cub[12].y =  60;  cub[12].z = 10;
+	cub[16].x = 0; cub[16].y =  80;  cub[16].z = 10;
+	cub[20].x = 0; cub[20].y = 100;  cub[20].z = 10;
+	cub[24].x = 0; cub[24].y = 120;  cub[24].z = 10;
+	cub[28].x = 0; cub[28].y = 140;  cub[28].z = 10;
+	cub[32].x = 0; cub[32].y = 160;  cub[32].z = 10;
+	cub[36].x = 0; cub[36].y = 180;  cub[36].z = 10;
+	cub[40].x = 0; cub[40].y = 200;  cub[40].z = 10;
+	cub[44].x = 0; cub[44].y = 220;  cub[44].z = 10;
+	cub[48].x = 0; cub[48].y = 240;  cub[40].z = 10;
+	cub[52].x = 0; cub[52].y = 260;  cub[52].z = 10;
+	cub[56].x = 0; cub[56].y = 280;  cub[56].z = 10;
+
+
+	for(int i=0;i<4;i++){
+  		cub[i].y = 0;
+
+		sina = sin(i*a);
+  		cosa = cos(i*a);
+  		cub[i].x = (int)(cub[0].x * cosa - cub[0].z * sina);
+  		cub[i].z = (int)(cub[0].x * sina + cub[0].z * cosa);
+
+  		cub[i+4].x = cub[i].x *2;
+  		cub[i+4].y = 20;
+  		cub[i+4].z = cub[i].z *2;
+
+  		cub[i+8].x = cub[i].x;
+  		cub[i+8].y = 40;
+  		cub[i+8].z = cub[i].z;
+
+  		cub[i+12].x = cub[i].x *2;
+  		cub[i+12].y = 60;
+  		cub[i+12].z = cub[i].z *2;
+
+  		cub[i+16].x = cub[i].x;
+  		cub[i+16].y = 80;
+  		cub[i+16].z = cub[i].z;
+
+  		cub[i+20].x = cub[i].x *2;
+  		cub[i+20].y = 100;
+  		cub[i+20].z = cub[i].z *2;
+
+  		cub[i+24].x = cub[i].x;
+  		cub[i+24].y = 120;
+  		cub[i+24].z = cub[i].z;
+
+  		cub[i+28].x = cub[i].x *2;
+  		cub[i+28].y = 140;
+  		cub[i+28].z = cub[i].z *2;
+
+  		cub[i+32].x = cub[i].x;
+  		cub[i+32].y = 160;
+  		cub[i+32].z = cub[i].z;
+
+        cub[i+36].x = cub[i].x*2;
+  		cub[i+36].y = 180;
+  		cub[i+36].z = cub[i].z*2;
+
+  		cub[i+40].x = cub[i].x;
+  		cub[i+40].y = 200;
+  		cub[i+40].z = cub[i].z;
+
+  		cub[i+44].x = cub[i].x*2;
+  		cub[i+44].y = 220;
+  		cub[i+44].z = cub[i].z*2;
+
+  		cub[i+48].x = cub[i].x;
+  		cub[i+48].y = 240;
+  		cub[i+48].z = cub[i].z;
+
+  		cub[i+52].x = cub[i].x*2;
+  		cub[i+52].y = 260;
+  		cub[i+52].z = cub[i].z*2;
+
+  		cub[i+56].x = cub[i].x;
+  		cub[i+56].y = 280;
+  		cub[i+56].z = cub[i].z;
+
+	}
+
+	FILE* fp = fopen("corp3d.txt","w");
+	// vertices (noduri, varfuri, vertex-uri)
+	fprintf(fp,"60");
+	for(int i=0;i<60;i++){
+		fprintf(fp, "\n%5.2lf %5.2lf %5.2lf",cub[i].x,cub[i].y,cub[i].z);
+	}
+
+	// edges (muchii)
+	for(int i=0;i<4;i++){
+
+		// suprafete
+		fprintf(fp, "\n%2d %2d",i,(i<3)?i+1:0);
+		fprintf(fp, "\n%2d %2d",i+4,(i<3)?i+5:4);
+		fprintf(fp, "\n%2d %2d",i+8,(i<3) ? i+9:8);
+		fprintf(fp, "\n%2d %2d",i+12,(i<3) ? i+13:12);
+		fprintf(fp, "\n%2d %2d",i+16,(i<3) ? i+17:16);
+		fprintf(fp, "\n%2d %2d",i+20,(i<3) ? i+21:20);
+		fprintf(fp, "\n%2d %2d",i+24,(i<3) ? i+25:24);
+		fprintf(fp, "\n%2d %2d",i+28,(i<3) ? i+29:28);
+		fprintf(fp, "\n%2d %2d",i+32,(i<3) ? i+33:32);
+		fprintf(fp, "\n%2d %2d",i+36,(i<3) ? i+37:36);
+		fprintf(fp, "\n%2d %2d",i+40,(i<3) ? i+41:40);
+		fprintf(fp, "\n%2d %2d",i+44,(i<3) ? i+45:44);
+		fprintf(fp, "\n%2d %2d",i+48,(i<3) ? i+49:48);
+		fprintf(fp, "\n%2d %2d",i+52,(i<3) ? i+53:52);
+		fprintf(fp, "\n%2d %2d",i+56,(i<3) ? i+57:56);
+
+
+		// muchii verticale
+		fprintf(fp, "\n%2d %2d",i,i+4);
+		fprintf(fp, "\n%2d %2d",i+4,i+8);
+		fprintf(fp, "\n%2d %2d",i+8,i+12);
+		fprintf(fp, "\n%2d %2d",i+12,i+16);
+		fprintf(fp, "\n%2d %2d",i+16,i+20);
+		fprintf(fp, "\n%2d %2d",i+20,i+24);
+		fprintf(fp, "\n%2d %2d",i+24,i+28);
+		fprintf(fp, "\n%2d %2d",i+28,i+32);
+		fprintf(fp, "\n%2d %2d",i+32,i+36);
+		fprintf(fp, "\n%2d %2d",i+36,i+40);
+		fprintf(fp, "\n%2d %2d",i+40,i+44);
+		fprintf(fp, "\n%2d %2d",i+44,i+48);
+		fprintf(fp, "\n%2d %2d",i+48,i+52);
+		fprintf(fp, "\n%2d %2d",i+52,i+56);
+
+
+	}
+
+	fclose(fp);
+}
+
+
+
+

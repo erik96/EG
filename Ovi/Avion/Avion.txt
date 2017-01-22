@@ -1,0 +1,111 @@
+#include <graphics.h>
+#include <conio.h>
+#include <math.h>
+#define NRN 4
+#define PI 3.141592
+
+typedef struct {
+    int x,y;
+}NOD;
+
+NOD v[NRN]={ {-35,-15},{50, 0},{-35,15},{0, 0} };
+
+
+void Dsn(int xc, int yc, double rot){
+    int i,x,y;
+    double co=cos(rot), si=sin(rot);
+    NOD tmp[NRN+1];
+    for(i=0;i<NRN;i++){
+        tmp[i].x=v[i].x+xc;
+        tmp[i].y=v[i].y+yc;
+    }
+    tmp[NRN].x=v[0].x+xc;
+    tmp[NRN].y=v[0].y+yc;
+
+    for(i=0;i<NRN+1;i++){
+        x=tmp[i].x;
+        y=tmp[i].y;
+        tmp[i].x = xc+(x-xc)*co - (y-yc)*si;
+        tmp[i].y = yc+(x-xc)*si + (y-yc)*co;
+    }
+    moveto(tmp[0].x, tmp[0].y);
+    for(i=0;i<NRN+1;i++)
+        lineto(tmp[i].x, tmp[i].y);
+    }
+
+int main(){
+    initwindow(600,480);
+    int i,j,x,y,xo,yo;
+    double u;
+
+
+    for(i=0;i<NRN;i++)
+        v[i].y = -v[i].y;
+
+    setwritemode(XOR_PUT);
+
+
+    x=50;  y=400;
+    for(i=100;i<=400;i+=10)
+        putpixel(x+i,y,WHITE);
+
+    for(u=-PI/2;u<PI/2;u+=0.1)
+        putpixel(450+100*cos(u),300-100*sin(u),WHITE);
+
+    for(i=0;i<=300;i+=10)
+        putpixel(150+i,200,WHITE);
+
+    for(u=PI/2;u<3*PI/2;u+=0.1)
+        putpixel(150+100*cos(u),300-100*sin(u),WHITE);
+
+
+
+    getch();
+
+    do{
+        for(xo=150,yo=400;xo<=450;xo+=10){
+            if(kbhit())
+                exit(0);
+            putpixel(xo,yo,5);
+            Dsn(xo,yo,0);
+            delay(30);
+            Dsn(xo,yo,0);
+        }
+
+        for(u=-PI/2;u<PI/2;u+=0.1) {
+            if(kbhit()) exit(0);
+            xo=450+100*cos(u);
+            yo=300-100*sin(u);
+            putpixel(xo,yo,5);
+            Dsn(xo,yo,-PI/2-u);
+            delay(30);
+            Dsn(xo,yo,-PI/2-u);
+        }
+
+        for(xo=450,yo=200;xo>=150;xo-=10) {
+            if(kbhit())
+                exit(0);
+            putpixel(xo,yo,5);
+            Dsn(xo,yo,PI);
+            delay(30);
+            Dsn(xo,yo,PI);
+        }
+
+        for(u=PI/2;u<3*PI/2;u+=0.1) {
+            if(kbhit())
+                exit(0);
+            xo=150+100*cos(u);
+            yo=300-100*sin(u);
+            putpixel(xo,yo,5);
+            Dsn(xo,yo,-PI/2-u);
+            delay(30);
+            Dsn(xo,yo,-PI/2-u);
+        }
+
+    }while(1);
+    closegraph();
+    return 0;
+}
+
+
+

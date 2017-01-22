@@ -1,0 +1,102 @@
+#include <iostream>
+#include<graphics.h>
+#include<math.h>
+#define scalX 30
+#define scalY 30
+#define PI 3.141592
+using namespace std;
+double f(double x){
+    return x*x*x+x*x;
+}
+typedef struct Node {
+    double x;
+    double fx;
+    Node *next;
+};
+
+
+
+void waitForLeftMouseClick(){
+    clearmouseclick(WM_LBUTTONDOWN);
+    const int DELAY = 50; // Milliseconds of delay between checks
+    int x, y;
+    while (!ismouseclick(WM_LBUTTONDOWN))
+    delay(DELAY);
+    getmouseclick(WM_LBUTTONDOWN,x,y);
+}
+int main()
+{
+    Node *root = new Node();
+    Node *it = root;
+    for (double x = -2; x<=1.5; x+=0.1) {
+        it->x = x;
+        it->fx = f(x);
+        if (x+0.1 == 36) {
+            it->next = NULL;
+        } else {
+            it->next = new Node();
+            it = it->next;
+        }
+    }
+    float x;
+    initwindow(800,800);
+
+    setcolor(GREEN);
+    moveto(150, 420);
+    lineto(150,100);
+    linerel(-3,10);
+    moverel(3,-10);
+    linerel(3,10);
+    moveto(30, 300);
+    lineto(600,300);
+    linerel(-10,3);
+    moverel(10,-3);
+    linerel(-10,-3);
+
+
+    for(x=-3;x<4;x++){
+        moveto(150+(int)(x*scalX),300);
+        linerel(0,7);
+    }
+    setcolor(BROWN);
+
+    x=-2;
+    moveto(150+(int)(x*scalX),300-(int)(f(x)*scalY));
+
+    it = root;
+    while (it->next) {
+        lineto( 150+(int)((it->x)*scalX), 300-(int)((it->fx)*scalY) );
+        it = it->next;
+    }
+
+    moveto(150+(int)(x*scalX),540-(int)(-f(x)*scalY));
+    setcolor(RED);
+
+
+    it = root;
+    while (it->next) {
+        lineto( 150+(int)((it->x)*scalX), 540-(int)(-(it->fx)*scalY) );
+        it = it->next;
+    }
+
+    it=root;
+    double cosa = cos(-PI/2), sina = sin(-PI/2);
+    while(it->next){
+            double xi,yi;
+            xi = it->x;
+            yi = it->fx;
+            it->x   = root->x + (xi-root->x)*cosa - (yi-root->fx)*sina;
+            it->fx  = root->fx + (xi-root->x)*sina + (yi-root->fx)*cosa;
+            it=it->next;
+    }
+    it = root;
+    moveto( 150+(int)((it->x)*scalX), 300-(int)((it->fx)*scalY) );
+    setcolor(BLUE);
+    while (it->next) {
+        lineto( 150+(int)((it->x)*scalX), 300-(int)((it->fx)*scalY) );
+        it = it->next;
+    }
+    waitForLeftMouseClick();
+
+    return 0;
+}
